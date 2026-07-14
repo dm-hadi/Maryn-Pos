@@ -8,7 +8,7 @@
     <!-- Meta tag untuk poni/status bar HP -->
     <meta name="theme-color" id="meta-theme-color" content="#fcf8f9">
 
-    <title>Login - TITIP PESAN POS</title>
+    <title>Login - MARYN POS</title>
     
     <!-- Font Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -90,10 +90,10 @@
 
             <div class="flex justify-between items-center text-xs md:text-sm mt-4 mb-8 pt-2 
                         text-gray-500 dark:text-pink-300/60">
-                <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 dark:hover:text-pink-300">
-                    <input type="checkbox" class="w-4 h-4 md:w-5 md:h-5 rounded border-gray-300 dark:border-pink-800/50"> 
-                    Remember me
-                </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 dark:hover:text-pink-300">
+                <input type="checkbox" id="rememberMe" class="w-4 h-4 md:w-5 md:h-5 rounded border-gray-300 dark:border-pink-800/50"> 
+                Remember me
+            </label>
                 <button type="button" onclick="showForgot()" class="hover:text-pink-500 dark:hover:text-pink-300 transition font-medium">Forgot password?</button>
             </div>
             
@@ -178,12 +178,14 @@
             };
         }
 
-        // --- 4. PROSES LOGIN ---
         // --- 4. PROSES LOGIN (DENGAN SESI PERMANEN) ---
+        // --- 4. PROSES LOGIN ---
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault(); 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            // Ambil status apakah checkbox dicentang atau tidak (menghasilkan true/false)
+            const isRemembered = document.getElementById('rememberMe').checked; 
             const themeStyle = getSwalTheme();
 
             Swal.fire({
@@ -195,8 +197,12 @@
             });
 
             try {
-                // 1. Kunci sesi agar tidak ter-logout saat aplikasi ditutup
-                await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                // 1. Atur Persistence berdasarkan Checkbox Remember Me
+                const persistenceType = isRemembered 
+                    ? firebase.auth.Auth.Persistence.LOCAL   // Jika dicentang: Sesi tersimpan permanen
+                    : firebase.auth.Auth.Persistence.SESSION; // Jika tidak: Sesi hilang saat browser/tab ditutup
+
+                await auth.setPersistence(persistenceType);
                 
                 // 2. Eksekusi login
                 await auth.signInWithEmailAndPassword(email, password);
@@ -216,6 +222,7 @@
                 }, 1500);
 
             } catch (error) {
+                // ... (bagian catch error biarkan sama persis seperti kodemu sebelumnya)
                 let errorMessage = 'Terjadi kesalahan pada sistem.';
                 if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
                     errorMessage = 'Email atau Password salah!';
