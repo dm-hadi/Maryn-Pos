@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ec4899"> <!-- Warna menyesuaikan tema -->
-    
+    <!-- Meta tag untuk poni/status bar HP -->
+    <meta name="theme-color" id="meta-theme-color" content="#fcf8f9">
+
     <title>Login - TITIP PESAN POS</title>
     
     <!-- Font Inter -->
@@ -111,22 +112,42 @@
 
     <script>
         // --- 1. PENGATURAN TEMA (DARK/LIGHT MODE) ---
+        // --- 1. PENGATURAN TEMA (DARK/LIGHT MODE) ---
         const htmlDoc = document.documentElement;
+        const metaThemeColor = document.getElementById("meta-theme-color");
+
+        // Fungsi untuk mengubah warna poni HP
+        function updateStatusBarColor(isDark) {
+            if (isDark) {
+                // Warna saat Dark Mode (mengikuti warna darkBg di Tailwind)
+                metaThemeColor.setAttribute("content", "#0f0a0c"); 
+            } else {
+                // Warna saat Light Mode (mengikuti bg default)
+                metaThemeColor.setAttribute("content", "#fcf8f9"); 
+            }
+        }
 
         // Cek Local Storage (Apakah user sebelumnya sudah milih tema?)
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        const isInitialDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        if (isInitialDark) {
             htmlDoc.classList.add('dark');
+            updateStatusBarColor(true); // Set poni ke gelap saat awal load
         } else {
             htmlDoc.classList.remove('dark');
+            updateStatusBarColor(false); // Set poni ke terang saat awal load
         }
 
         // Fungsi Tombol Switch Tema
         function toggleTheme() {
             htmlDoc.classList.toggle('dark');
+            
             if (htmlDoc.classList.contains('dark')) {
                 localStorage.theme = 'dark';
+                updateStatusBarColor(true); // Ubah poni jadi gelap saat tombol ditekan
             } else {
                 localStorage.theme = 'light';
+                updateStatusBarColor(false); // Ubah poni jadi terang saat tombol ditekan
             }
         }
 
@@ -242,6 +263,6 @@
             });
         }
     </script>
-    
+
 </body>
 </html>
