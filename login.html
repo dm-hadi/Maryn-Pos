@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Login - TITIP PESAN POS</title>
+    
+    <!-- Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Memanggil file CSS Eksternal -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Konfigurasi Tailwind untuk Dark Mode -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Menggunakan class 'dark' pada tag <html>
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        darkBg: '#0f0a0c', // Warna background dark mode
+                        darkCard: '#1a1114',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+</head>
+
+<!-- Default background menyesuaikan tema -->
+<body class="bg-[#fcf8f9] dark:bg-darkBg min-h-screen flex items-center justify-center p-5 relative transition-colors duration-500">
+
+    <!-- Tombol Toggle Tema (Kanan Atas) -->
+    <button onclick="toggleTheme()" class="absolute top-5 right-5 p-3 rounded-full bg-white dark:bg-[#2a1d22] shadow-md dark:shadow-pink-900/20 text-gray-800 dark:text-pink-300 hover:scale-110 transition-transform">
+        <!-- Icon Sun (Muncul di Dark Mode) -->
+        <svg id="icon-sun" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+        <!-- Icon Moon (Muncul di Light Mode) -->
+        <svg id="icon-moon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+    </button>
+
+    <!-- KOTAK FORM RESPONSIF -->
+    <main class="w-full max-w-lg md:max-w-xl lg:max-w-2xl p-8 sm:p-12 md:p-14 rounded-[2.5rem] 
+                 bg-white shadow-[0_10px_40px_rgba(236,72,153,0.1)] border border-pink-100
+                 dark:bg-darkCard dark:shadow-[0_10px_40px_rgba(236,72,153,0.15)] dark:border dark:border-pink-900/40">
+        
+        <header class="text-center mb-10 flex flex-col items-center justify-center">
+            <!-- GANTI "logo.png" DI BAWAH INI DENGAN NAMA FILE GAMBARMU -->
+            <img src="login.png" alt="Logo TITIP PESAN" class="h-[135px] w-auto object-contain mb-3 dark:drop-shadow-[0_0_15px_rgba(236,72,153,0.3)] transition-all">
+            <p class="text-sm mt-2 text-gray-500 dark:text-pink-200/60 font-medium">Silahkan Masuk ke sistem Anda</p>
+        </header>
+
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <input type="email" id="email" placeholder="Username / Email" required
+                    class="w-full px-6 py-4 md:py-4 md:text-base rounded-2xl border focus:outline-none focus:ring-2 transition-all text-sm
+                           bg-gray-50 border-gray-200 text-gray-800 focus:ring-pink-400 placeholder:text-gray-400
+                           dark:bg-[#25171c] dark:border-pink-900/30 dark:text-pink-100 dark:focus:ring-pink-500 dark:placeholder:text-pink-300/30">
+            </div>
+            
+            <div>
+                <input type="password" id="password" placeholder="Password" required
+                    class="w-full px-6 py-4 md:py-4 md:text-base rounded-2xl border focus:outline-none focus:ring-2 transition-all text-sm
+                           bg-gray-50 border-gray-200 text-gray-800 focus:ring-pink-400 placeholder:text-gray-400
+                           dark:bg-[#25171c] dark:border-pink-900/30 dark:text-pink-100 dark:focus:ring-pink-500 dark:placeholder:text-pink-300/30">
+            </div>
+
+            <div class="flex justify-between items-center text-xs md:text-sm mt-4 mb-8 pt-2 
+                        text-gray-500 dark:text-pink-300/60">
+                <label class="flex items-center gap-2 cursor-pointer hover:text-pink-500 dark:hover:text-pink-300">
+                    <input type="checkbox" class="w-4 h-4 md:w-5 md:h-5 rounded border-gray-300 dark:border-pink-800/50"> 
+                    Remember me
+                </label>
+                <button type="button" onclick="showForgot()" class="hover:text-pink-500 dark:hover:text-pink-300 transition font-medium">Forgot password?</button>
+            </div>
+            
+            <button type="submit"
+                class="w-full text-white py-4 md:py-4 md:text-lg rounded-2xl font-bold shadow-lg transition-all active:scale-[0.98]
+                       bg-pink-500 hover:bg-pink-600 shadow-pink-200
+                       dark:bg-gradient-to-r dark:from-pink-600 dark:to-rose-700 dark:shadow-pink-900/40 dark:hover:shadow-pink-900/60">
+                Login
+            </button>
+        </form>
+
+        <footer class="text-center text-[10px] md:text-xs mt-10 uppercase tracking-widest font-semibold text-gray-400 dark:text-pink-900">
+            © 2026 ERP System
+        </footer>
+    </main>
+
+    <script>
+        // --- 1. PENGATURAN TEMA (DARK/LIGHT MODE) ---
+        const htmlDoc = document.documentElement;
+
+        // Cek Local Storage (Apakah user sebelumnya sudah milih tema?)
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlDoc.classList.add('dark');
+        } else {
+            htmlDoc.classList.remove('dark');
+        }
+
+        // Fungsi Tombol Switch Tema
+        function toggleTheme() {
+            htmlDoc.classList.toggle('dark');
+            if (htmlDoc.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+            } else {
+                localStorage.theme = 'light';
+            }
+        }
+
+        // --- 2. KONFIGURASI FIREBASE ---
+        const firebaseConfig = {
+        apiKey: "AIzaSyDQmfkeBvc0e01EK8ayWSRG9Bpp34c8_pw",
+        authDomain: "maryn-id.firebaseapp.com",
+        projectId: "maryn-id",
+        storageBucket: "maryn-id.firebasestorage.app",
+        messagingSenderId: "200503979380",
+        appId: "1:200503979380:web:541f9e7928cb186fe01021"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        auth.onAuthStateChanged((user) => {
+            if (user) window.location.replace("index.html");
+        });
+
+        // --- 3. HELPER SWEETALERT AGAR MENGIKUTI TEMA ---
+        function getSwalTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                background: isDark ? '#1a1114' : '#ffffff',
+                color: isDark ? '#fbcfe8' : '#1f2937',
+                confirmButtonColor: '#ec4899' // Pink-500
+            };
+        }
+
+        // --- 4. PROSES LOGIN ---
+        // --- 4. PROSES LOGIN (DENGAN SESI PERMANEN) ---
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const themeStyle = getSwalTheme();
+
+            Swal.fire({
+                title: 'Memproses...',
+                allowOutsideClick: false,
+                background: themeStyle.background,
+                color: themeStyle.color,
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                // 1. Kunci sesi agar tidak ter-logout saat aplikasi ditutup
+                await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                
+                // 2. Eksekusi login
+                await auth.signInWithEmailAndPassword(email, password);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Mengalihkan ke halaman utama...',
+                    background: themeStyle.background,
+                    color: themeStyle.color,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+
+            } catch (error) {
+                let errorMessage = 'Terjadi kesalahan pada sistem.';
+                if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                    errorMessage = 'Email atau Password salah!';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Terlalu banyak percobaan. Silakan coba lagi nanti.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Format email tidak valid!';
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Gagal',
+                    text: errorMessage, 
+                    background: themeStyle.background,
+                    color: themeStyle.color,
+                    confirmButtonColor: themeStyle.confirmButtonColor
+                });
+            }
+        });
+
+        // --- 5. FUNGSI LUPA PASSWORD ---
+        function showForgot() {
+            const themeStyle = getSwalTheme();
+            Swal.fire({
+                title: 'Butuh Bantuan?',
+                text: 'Silakan hubungi Administrator untuk akses akun Anda.',
+                background: themeStyle.background,
+                color: themeStyle.color,
+                confirmButtonColor: themeStyle.confirmButtonColor
+            });
+        }
+    </script>
+</body>
+</html>
