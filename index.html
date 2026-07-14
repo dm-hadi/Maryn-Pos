@@ -871,36 +871,33 @@
         /* ==============================================================
         CSS RESPONSIVE - FIX GAP KIRI KANAN
         ============================================================== */
-/* ==============================================================
-        CSS RESPONSIVE - FIX GAP KIRI KANAN (YANG BENAR)
+        /* ==============================================================
+        FIX GAP KIRI KANAN UNTUK LAYAR DESKTOP / MONITOR LEBAR
         ============================================================== */
-        .app, .main-container {
-            width: 100%;
-            /* Hapus max-width: 100% agar tidak membunuh media query min-width desktop */
-            margin: 0 auto;
-            box-sizing: border-box; 
-        }
+        @media (min-width: 1024px) {
+            .app, .main-container {
+                /* Ubah max-width menjadi 100% agar memenuhi layar */
+                max-width: 100%; 
+                width: 100%;
+                
+                /* Tambahkan padding agar elemen tidak menabrak ujung kiri/kanan monitor */
+                padding-left: 30px !important; 
+                padding-right: 30px !important; 
+                box-sizing: border-box;
+            }
 
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 15px;
-            width: 100%;
-        }
-
-        /* Pastikan elemen ini mengikut ukuran .app */
-        .header, .bottom-nav {
-            width: 100%;
-        }
-        
-        .card {
-            width: 100%;
-        }
-
-        @media (min-width: 1200px) {
-            .stats-container {
+            /* Opsi: Memastikan kartu statistik (jika ada class ini) terbagi rata ke samping */
+            .stats-container, .content-grid {
                 display: grid;
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(4, 1fr); /* 4 kartu berjajar rapi ke samping */
+                gap: 20px;
+                width: 100%;
+            }
+
+            /* Pastikan header dan bottom-nav juga melebar penuh mengikuti kontainer */
+            .header, .bottom-nav {
+                width: 100%;
+                max-width: 100%;
             }
         }
     </style>
@@ -1520,8 +1517,9 @@
         storageBucket: "database-maryn.firebasestorage.app",
         messagingSenderId: "937284639769",
         appId: "1:937284639769:web:fa2f1522b11729aaf01e88"
-        };            
+        };
 
+        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         // TAMBAHKAN MULAI DARI SINI
