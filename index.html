@@ -600,6 +600,39 @@
             }
         }
 
+        @media print {
+            /* 1. Paksa body dan html agar memanjang ke bawah dan tidak terpotong */
+            html, body {
+                height: auto !important;
+                overflow: visible !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background-color: white !important; /* Paksa background jadi putih */
+            }
+        
+            /* 2. Jika ada class khusus yang membungkus area yang mau dicetak (misal: id="area-cetak") */
+            /* Pastikan dia dipaksa tampil (block) dan tidak dibatasi tingginya */
+            #area-cetak, .area-cetak {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                position: relative !important;
+                overflow: visible !important;
+            }
+        
+            /* 3. Sembunyikan elemen yang BUKAN untuk dicetak (Tombol, Sidebar, Navigasi) */
+            .no-print {
+                display: none !important;
+            }
+        
+            /* 4. Paksa warna text agar jelas (mencegah warna text membaur dengan kertas) */
+            * {
+                color: black !important;
+            }
+        }
+
+        
         /* --- CSS PROMO SUPPLIER (UPDATE MIRIP E-COMMERCE MODERN) --- */
         .promo-scroll { 
             display: flex; overflow-x: auto; gap: 12px; padding-bottom: 12px; 
