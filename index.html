@@ -1508,7 +1508,7 @@
         storageBucket: "maryn-id.firebasestorage.app",
         messagingSenderId: "200503979380",
         appId: "1:200503979380:web:541f9e7928cb186fe01021"
-        };            
+        };             
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -1581,7 +1581,6 @@
             const d = new Date(dateStr);
             return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
         }
-
        // 1. Data Mentah Shopee
         const rawShopeeFees = `
         Fashion Accessories|Hair Accessories|Headbands & Bandanas, Hair Ties, Ribbons & Scrunchies, Hair Clips & Pins, Wigs & Extensions, Headwear, Tiaras & Flower Crowns, Other Hair Accessories|9.00
@@ -8801,6 +8800,7 @@
         HIDOOOPPP JOKWO | HEI ANTEK ANTEK ASEEENN | 0.00
         `;
 
+
         function parseRawFees(rawText, platformPrefix) {
             return rawText.trim().split('\n').filter(line => line.trim() !== '').map((line, index) => {
                 const parts = line.split('|');
@@ -9116,12 +9116,17 @@
         function init() {
             const savedTheme = localStorage.getItem("maryn_theme");
             const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            const themeIcon = document.getElementById("theme-icon");
 
             if (savedTheme === "dark") {
                 document.documentElement.setAttribute("data-theme", "dark");
                 metaThemeColor.setAttribute("content", "#0d0508"); 
+                // Set icon ke Bulan (Moon)
+                if (themeIcon) themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />';
             } else {
                 metaThemeColor.setAttribute("content", "#fdf5f7"); 
+                // Set icon ke Matahari (Sun)
+                if (themeIcon) themeIcon.innerHTML = '<circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />';
             }
 
             loadSettingsToForm();
@@ -9826,15 +9831,22 @@ let promoScrollInterval;
         function toggleTheme() {
             const html = document.documentElement;
             const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+            const themeIcon = document.getElementById("theme-icon"); // Tambahkan ini
             
             if (html.getAttribute("data-theme") === "dark") {
+                // Berubah ke Light Mode
                 html.removeAttribute("data-theme");
                 localStorage.setItem("maryn_theme", "light");
                 metaThemeColor.setAttribute("content", "#fdf5f7");
+                // Ganti icon jadi Matahari
+                if (themeIcon) themeIcon.innerHTML = '<circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />';
             } else {
+                // Berubah ke Dark Mode
                 html.setAttribute("data-theme", "dark");
                 localStorage.setItem("maryn_theme", "dark");
                 metaThemeColor.setAttribute("content", "#0d0508");
+                // Ganti icon jadi Bulan
+                if (themeIcon) themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />';
             }
         }
 
