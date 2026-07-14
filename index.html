@@ -562,30 +562,40 @@
 
         @media print {
             @page { margin: 0; } 
-            body { background: white; margin: 0; padding: 0; }
-            body * { visibility: hidden; }
-            
-            #modal-struk, #modal-struk * { visibility: visible; }
-            #modal-struk {
-                position: absolute !important;
-                left: 0 !important;
-                top: 0 !important;
-                width: 100% !important;
+            body, html { 
+                background: white !important; 
+                margin: 0 !important; 
+                padding: 0 !important;
                 height: auto !important;
+            }
+
+            /* Sembunyikan SEMUA elemen dasar pembentuk UI */
+            .header, .bottom-nav, .main, .toast, .modal-overlay:not(#modal-struk) {
+                display: none !important;
+            }
+
+            /* Tampilkan HANYA modal struk */
+            #modal-struk {
+                position: relative !important;
                 display: block !important; 
                 background: white !important;
                 padding: 0 !important;
                 margin: 0 !important;
+                align-items: flex-start !important;
             }
             
             #modal-struk .modal {
-                position: static !important;
+                position: relative !important;
                 max-height: none !important;
                 padding: 0 !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
+                width: 100% !important;
+                transform: none !important;
+                animation: none !important;
             }
             
+            /* Sembunyikan tombol-tombol dan header modal saat print */
             .modal-header, #struk-main-actions, #struk-dl-options, .close-btn, .action-row { 
                 display: none !important; 
             }
@@ -593,46 +603,13 @@
             #struk-capture-area { 
                 border: none !important; 
                 box-shadow: none !important; 
-                margin: 0 !important; 
-                padding: 10px !important; 
+                margin: 0 auto !important; 
+                padding: 15px !important; 
                 width: 100% !important; 
                 display: block !important;
             }
         }
 
-        @media print {
-            /* 1. Paksa body dan html agar memanjang ke bawah dan tidak terpotong */
-            html, body {
-                height: auto !important;
-                overflow: visible !important;
-                width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background-color: white !important; /* Paksa background jadi putih */
-            }
-        
-            /* 2. Jika ada class khusus yang membungkus area yang mau dicetak (misal: id="area-cetak") */
-            /* Pastikan dia dipaksa tampil (block) dan tidak dibatasi tingginya */
-            #area-cetak, .area-cetak {
-                display: block !important;
-                width: 100% !important;
-                height: auto !important;
-                position: relative !important;
-                overflow: visible !important;
-            }
-        
-            /* 3. Sembunyikan elemen yang BUKAN untuk dicetak (Tombol, Sidebar, Navigasi) */
-            .no-print {
-                display: none !important;
-            }
-        
-            /* 4. Paksa warna text agar jelas (mencegah warna text membaur dengan kertas) */
-            * {
-                color: black !important;
-            }
-        }
-
-        
         /* --- CSS PROMO SUPPLIER (UPDATE MIRIP E-COMMERCE MODERN) --- */
         .promo-scroll { 
             display: flex; overflow-x: auto; gap: 12px; padding-bottom: 12px; 
@@ -894,11 +871,13 @@
         /* ==============================================================
         CSS RESPONSIVE - FIX GAP KIRI KANAN
         ============================================================== */
+/* ==============================================================
+        CSS RESPONSIVE - FIX GAP KIRI KANAN (YANG BENAR)
+        ============================================================== */
         .app, .main-container {
             width: 100%;
-            max-width: 100%; 
+            /* Hapus max-width: 100% agar tidak membunuh media query min-width desktop */
             margin: 0 auto;
-            padding: 0 10px; 
             box-sizing: border-box; 
         }
 
@@ -909,13 +888,13 @@
             width: 100%;
         }
 
-        @media (min-width: 768px) {
-            .app { padding: 0 15px; }
+        /* Pastikan elemen ini mengikut ukuran .app */
+        .header, .bottom-nav {
+            width: 100%;
         }
-
-        .header, .bottom-nav, .card {
-            width: 100% !important;
-            max-width: 100% !important;
+        
+        .card {
+            width: 100%;
         }
 
         @media (min-width: 1200px) {
