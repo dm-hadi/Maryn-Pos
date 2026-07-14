@@ -16,6 +16,7 @@ const CACHE_NAME = 'maryn-pos-cache-v1';
 // Sesuaikan nama file HTML, CSS, JS, dan gambar Anda di sini
 const ASSETS_TO_CACHE = [
     './',
+    './login.html',
     './index.html',
     './logo.png'
     // Tambahkan file CSS atau JS jika Anda memisahkannya, contoh:
