@@ -1495,8 +1495,15 @@
                     <button class="close-btn" data-close="modal-struk">&#10005;</button>
                 </div>
                 
-                <div id="struk-capture-area" style="background: #ffffff; color: #000000; padding: 20px; border-radius: 16px; margin-bottom: 20px; display: flex; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                    <div id="struk-content" style="font-family: monospace; font-size: 13px; line-height: 1.6; white-space: pre-wrap; display: inline-block; text-align: left;"></div>
+                <!-- BUNGKUS UTAMA: Hanya untuk memposisikan struk di tengah layar secara visual -->
+                <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px; overflow-x: auto;">
+                    
+                    <!-- AREA CAPTURE: Area ini yang akan dipotret. Dibuat 'width: max-content' agar ukurannya pas dengan teks -->
+                    <div id="struk-capture-area" style="background: #ffffff; color: #000000; padding: 10px 15px; width: max-content; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <!-- KONTEN TEKS: Dibuat lebih tebal sedikit agar cetakan printer thermal lebih jelas -->
+                        <div id="struk-content" style="font-family: monospace; font-size: 14px; font-weight: 700; line-height: 1.5; white-space: pre-wrap; text-align: left;"></div>
+                    </div>
+
                 </div>
 
                 <div class="action-row" id="struk-main-actions" style="gap: 10px;">
@@ -9080,7 +9087,7 @@
 
         async function getStrukCanvas() {
             const el = document.getElementById("struk-capture-area");
-            return await html2canvas(el, { scale: 2, backgroundColor: "#ffffff" });
+            return await html2canvas(el, { scale: 50, backgroundColor: "#ffffff" });
         }
 
         function cetakStrukBawaanBrowser() {
@@ -9093,8 +9100,8 @@
                 showToast("Menyiapkan file gambar...");
                 const canvas = await getStrukCanvas();
                 const link = document.createElement("a");
-                link.download = "Struk_Maryn_" + new Date().getTime() + ".jpg";
-                link.href = canvas.toDataURL("image/jpeg", 1.0);
+                link.download = "Struk_Maryn_" + new Date().getTime() + ".png";
+                link.href = canvas.toDataURL("image/png", 1.0);
                 link.click();
                 showToast("Gambar berhasil diunduh otomatis!");
             } catch (e) {
@@ -9108,7 +9115,7 @@
                 const canvas = await getStrukCanvas();
                 canvas.toBlob(async (blob) => {
                     if (!blob) { showToast("Gagal memproses gambar."); return; }
-                    const file = new File([blob], "Struk_Maryn.jpg", { type: "image/jpeg" });
+                    const file = new File([blob], "Struk_Maryn.png", { type: "image/png" });
 
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         await navigator.share({
@@ -9126,7 +9133,7 @@
                         const text = encodeURIComponent(document.getElementById("struk-content").textContent);
                         window.location.href = "https://wa.me/?text=" + text;
                     }
-                }, "image/jpeg", 1.0);
+                }, "image/png", 1.0);
             } catch (e) {
                 if(e.name !== 'AbortError') showToast("Gagal share: " + e.message);
             }
@@ -10113,7 +10120,7 @@ let promoScrollInterval;
             const index = dailyTxs.findIndex(t => t.id === tx.id) + 1;
             const noInvoice = (tx.type === 'penjualan' ? "INV" : "EXP") + "/" + tx.date.replace(/-/g, '') + "/" + String(index).padStart(3, '0');
 
-            let struk = "=====================================\n";
+            let struk = "\n";
             struk += "        MARYN GHANIYAH MAHADI\n";
             struk += "=====================================\n";
             struk += "Jl.Jawa, Sei Sikambing C II\n";
@@ -10124,7 +10131,7 @@ let promoScrollInterval;
             struk += "-------------------------------------\n";
             if (tx.type === 'penjualan') { struk += "          STRUK PEMBELIAN\n"; } else { struk += "         NOTA BELANJA MARYN\n"; }
             struk += "-------------------------------------\n";
-            struk += "Nama Barang                Qty x Harga\n";
+            struk += "Nama Barang               Qty x Harga\n";
             struk += "-------------------------------------\n";
             
             tx.items.forEach((item) => {
@@ -10136,16 +10143,17 @@ let promoScrollInterval;
             
             struk += "-------------------------------------\n";
             struk += "Total".padEnd(20) + " " + formatRupiah(tx.total).padStart(16) + "\n";
-            struk += "=====================================\n";
+            struk += "-------------------------------------\n";
             
             if (tx.type === 'penjualan') {
                 struk += "    Terima Kasih Sudah Berbelanja\n";
                 struk += "      Semoga harimu menyenangkan\n";
                 struk += "=====================================\n";
                 struk += "       Nota di Cetak Oleh System \n";
-                struk += "         ©All rights reserved.\n";
+                struk += "      ©MARYN.All rights reserved.\n";
             } else {
-                struk += "     Catatan Pembelian MARYN\n";
+                struk += "          Catatan Pembelian\n";
+                struk += "     ©Maryn. All rights reserved.\n";
             }
             
             const strukContent = document.getElementById("struk-content");
