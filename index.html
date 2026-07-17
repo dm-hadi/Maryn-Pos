@@ -8907,16 +8907,47 @@
             });
 
             document.getElementById("buku-list").addEventListener("click", function (e) {
-                const btnDelete = e.target.closest(".btn-delete-tx");
-                if (btnDelete) {
-                    const id = btnDelete.dataset.id;
-                    if (confirm("Yakin ingin menghapus transaksi ini?")) {
-                        db.collection("transactions").doc(id).delete()
-                        .then(() => showToast("Transaksi berhasil dihapus!"))
-                        .catch(err => showToast("Gagal menghapus transaksi."));
+            const btnDelete = e.target.closest(".btn-delete-tx");
+            if (btnDelete) {
+                const id = btnDelete.dataset.id;
+                Swal.fire({
+                    title: 'Hapus Transaksi?',
+                    text: "Data transaksi yang dihapus tidak dapat dikembalikan.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: 'var(--danger)', 
+                    cancelButtonColor: 'var(--text-tert)', 
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    background: 'var(--card-bg)',
+                    color: 'var(--text)',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'card' // Mewarisi border-radius dari CSS class .card Anda
                     }
-                    return;
-                }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Menghapus...',
+                            allowOutsideClick: false,
+                            background: 'var(--card-bg)',
+                            color: 'var(--text)',
+                            didOpen: () => Swal.showLoading()
+                        });
+                        
+                        db.collection("transactions").doc(id).delete()
+                        .then(() => {
+                            Swal.close();
+                            showToast("Transaksi berhasil dihapus!");
+                        })
+                        .catch(err => {
+                            Swal.close();
+                            showToast("Gagal menghapus transaksi.");
+                        });
+                    }
+                });
+                return;
+            }
                 const btnEdit = e.target.closest(".btn-edit-tx");
                 if (btnEdit) { editTx(btnEdit.dataset.id); return; }
                 const btnPrintList = e.target.closest(".btn-print-tx");
@@ -9111,31 +9142,29 @@
 
         async function shareOtomatisPilihAplikasi() {
             try {
-                showToast("Menyiapkan struk...");
-                const canvas = await getStrukCanvas();
-                canvas.toBlob(async (blob) => {
-                    if (!blob) { showToast("Gagal memproses gambar."); return; }
-                    const file = new File([blob], "Struk_Maryn.png", { type: "image/png" });
+                // Ambil Teks Versi 2 (yang disusun ke bawah tanpa spasi lebar)
+                const strukContent = document.getElementById("struk-content");
+                const shareText = strukContent.getAttribute("data-share-text");
 
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            title: 'Struk Transaksi',
-                            text: 'Terlampir struk transaksi dari Maryn.',
-                            files: [file]
-                        });
-                    } else if (navigator.share) {
-                        const text = document.getElementById("struk-content").textContent;
-                        await navigator.share({
-                            title: 'Struk Transaksi',
-                            text: text
-                        });
-                    } else {
-                        const text = encodeURIComponent(document.getElementById("struk-content").textContent);
-                        window.location.href = "https://wa.me/?text=" + text;
-                    }
-                }, "image/png", 1.0);
+                if (!shareText) {
+                    showToast("Teks struk tidak ditemukan!");
+                    return;
+                }
+
+                // Kirim langsung sebagai TEKS MURNI (Bukan Gambar)
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'Struk Transaksi Maryn',
+                        text: shareText
+                    });
+                    showToast("Membuka aplikasi cetak...");
+                } else {
+                    // Fallback ke WhatsApp jika browser tidak support Share
+                    const encodedText = encodeURIComponent(shareText);
+                    window.location.href = "https://wa.me/?text=" + encodedText;
+                }
             } catch (e) {
-                if(e.name !== 'AbortError') showToast("Gagal share: " + e.message);
+                if(e.name !== 'AbortError') showToast("Gagal membagikan: " + e.message);
             }
         }
 
@@ -10115,12 +10144,15 @@ let promoScrollInterval;
             }
         }
 
-        function generateStruk(tx) {
+function generateStruk(tx) {
             const dailyTxs = transactions.filter(t => t.date === tx.date && t.type === tx.type).sort((a,b) => a.createdAt - b.createdAt);
             const index = dailyTxs.findIndex(t => t.id === tx.id) + 1;
             const noInvoice = (tx.type === 'penjualan' ? "INV" : "EXP") + "/" + tx.date.replace(/-/g, '') + "/" + String(index).padStart(3, '0');
 
-            let struk = "\n";
+            // ==================================================
+            // VERSI 1: TAMPILAN LAYAR (Rapi dengan Spasi)
+            // ==================================================
+            let struk = "=====================================\n";
             struk += "        MARYN GHANIYAH MAHADI\n";
             struk += "=====================================\n";
             struk += "Jl.Jawa, Sei Sikambing C II\n";
@@ -10143,21 +10175,56 @@ let promoScrollInterval;
             
             struk += "-------------------------------------\n";
             struk += "Total".padEnd(20) + " " + formatRupiah(tx.total).padStart(16) + "\n";
-            struk += "-------------------------------------\n";
+            struk += "=====================================\n";
             
             if (tx.type === 'penjualan') {
                 struk += "    Terima Kasih Sudah Berbelanja\n";
                 struk += "      Semoga harimu menyenangkan\n";
                 struk += "=====================================\n";
                 struk += "       Nota di Cetak Oleh System \n";
-                struk += "      ©MARYN.All rights reserved.\n";
+                struk += "         ©All rights reserved.\n";
             } else {
-                struk += "          Catatan Pembelian\n";
-                struk += "     ©Maryn. All rights reserved.\n";
+                struk += "      Catatan Pembelian MARYN\n";
+            }
+
+            // ==================================================
+            // VERSI 2: UNTUK SHARE KE THERMER (Susun Bawah Tanpa Spasi)
+            // ==================================================
+            let shareText = "MARYN GHANIYAH MAHADI\n";
+            shareText += "Jl. Jawa, Sei Sikambing C II\n";
+            shareText += "Medan Helvetia\n";
+            shareText += "------------------------\n";
+            shareText += "No: " + noInvoice + "\n";
+            shareText += "Tgl: " + tx.date + "\n";
+            shareText += "------------------------\n";
+            if (tx.type === 'penjualan') { shareText += "STRUK PEMBELIAN\n"; } else { shareText += "NOTA BELANJA\n"; }
+            shareText += "------------------------\n";
+            
+            tx.items.forEach((item) => {
+                // Susun nama barang di baris pertama, qty & harga di baris kedua
+                shareText += item.name + "\n";
+                shareText += item.qty + " x " + formatRupiah(item.price) + "\n";
+            });
+            
+            shareText += "------------------------\n";
+            shareText += "Total: " + formatRupiah(tx.total) + "\n";
+            shareText += "------------------------\n";
+            
+            if (tx.type === 'penjualan') {
+                shareText += "Terima Kasih Berbelanja\n";
+                shareText += "Semoga menyenangkan\n";
+            } else {
+                shareText += "Catatan Pembelian\n";
+            }
+
+            // Tampilkan Versi 1 ke Layar
+            const strukContent = document.getElementById("struk-content");
+            if(strukContent) {
+                strukContent.textContent = struk;
+                // Simpan Versi 2 secara rahasia di dalam elemen
+                strukContent.setAttribute("data-share-text", shareText);
             }
             
-            const strukContent = document.getElementById("struk-content");
-            if(strukContent) strukContent.textContent = struk;
             const modalStruk = document.getElementById("modal-struk");
             if(modalStruk) modalStruk.classList.add("active");
         }
@@ -10212,10 +10279,44 @@ let promoScrollInterval;
 
         function deleteProduct() {
             if (!editingProductId) return;
-            if (confirm("Yakin ingin menghapus produk ini dari Cloud?")) {
-                db.collection("products").doc(editingProductId).delete()
-                .then(() => { closeModal("modal-product"); showToast("Produk berhasil dihapus!"); });
-            }
+            
+            Swal.fire({
+                title: 'Hapus Produk?',
+                text: "Produk ini akan dihapus secara permanen dari Cloud Database.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--danger)',
+                cancelButtonColor: 'var(--text-tert)',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                background: 'var(--card-bg)',
+                color: 'var(--text)',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'card'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        allowOutsideClick: false,
+                        background: 'var(--card-bg)',
+                        color: 'var(--text)',
+                        didOpen: () => Swal.showLoading()
+                    });
+
+                    db.collection("products").doc(editingProductId).delete()
+                    .then(() => { 
+                        Swal.close();
+                        closeModal("modal-product"); 
+                        showToast("Produk berhasil dihapus!"); 
+                    })
+                    .catch(err => {
+                        Swal.close();
+                        showToast("Gagal menghapus produk.");
+                    });
+                }
+            });
         }
 
         function hitungBiasa() {
