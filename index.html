@@ -20,12 +20,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="icon-512.png"> <link rel="manifest" href="manifest.json">
-    
-    
+    <link rel="apple-touch-icon" href="icon-512.png"> <link rel="manifest" href="manifest.json">    
 
-    <style>
-
+<style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         :root {
@@ -39,7 +36,7 @@
             --text-quat: #c2a3b2;
             --border-color: rgba(234, 193, 207, 0.4);     
             --hover-bg: #fff0f4;         
-            --accent: #ff3377; /* Soft Vibrant Pink */           
+            --accent: #ff3377; /* Soft Vibrant Pink */            
             --accent-glow: rgba(255, 51, 119, 0.3);
             --danger: #ff3b30;
             --positive: #34c759;
@@ -71,7 +68,7 @@
             --text-quat: #6b4c5b;
             --border-color: rgba(255, 51, 119, 0.2); /* Glowing border */     
             --hover-bg: #241018;         
-            --accent: #ff2a7a; /* Neon Pink */           
+            --accent: #ff2a7a; /* Neon Pink */            
             --accent-glow: rgba(255, 42, 122, 0.6);
             --danger: #ff453a;
             --positive: #30d158;
@@ -173,7 +170,7 @@
 
         .main {
             flex: 1;
-            padding: 85px 12px 95px 12px; /* Diberi ruang bernapas lebih */
+            padding: 85px 12px 95px 12px;
             overflow-y: auto;
         }
 
@@ -190,7 +187,7 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 12px 8px 24px 8px; /* Lebih rounded di bawah */
+            padding: 12px 8px 24px 8px;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             box-shadow: 0 -10px 30px rgba(0,0,0,0.03);
@@ -362,7 +359,6 @@
             justify-content: center;
             gap: 8px;
         }
-        /* Changed primary btn to accent pink */
         .btn-primary { 
             background: var(--accent); 
             color: #ffffff; 
@@ -447,7 +443,6 @@
         .product-name { font-size: 15px; font-weight: 800; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .product-meta { font-size: 12px; color: var(--text-tert); margin-top: 4px; }
         
-        /* FIX: Menggunakan auto-fit agar kotak harga tidak gepeng/terpotong */
         .product-prices { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); 
@@ -456,7 +451,7 @@
             width: 100%;
         }
 
-        /* TRANSACTION ITEMS */
+        /* TRANSACTION ITEMS & GRID SYSTEM (UPDATED) */
         .tx-item {
             display: flex; justify-content: space-between; align-items: center; padding: 16px;
             border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--card-bg);
@@ -470,6 +465,102 @@
         .tx-amount { font-size: 16px; font-weight: 800; text-shadow: var(--glow); }
         .tx-amount.income { color: var(--positive); }
         .tx-amount.expense { color: var(--danger); }
+
+        /* ==============================================================
+           MODERNISASI KARTU TRANSAKSI (UI INVOICE CARD) & GRID SYSTEM
+           ============================================================== */
+        .tx-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        .tx-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--glow); }
+        
+        /* PENGATURAN GRID DAFTAR TRANSAKSI (BUKU & DASHBOARD) */
+        #buku-list, #dash-tx-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            width: 100%;
+        }
+        #buku-list .tx-card, #dash-tx-list .tx-card {
+            margin-bottom: 0; /* Menghilangkan margin, digantikan oleh gap grid */
+            height: 100%;     /* Memenuhi ukuran cell grid */
+        }
+
+        .tx-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 14px;
+        }
+        
+        .tx-badges { display: flex; gap: 8px; align-items: center; }
+        .tx-badge {
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .tx-badge.income { background: rgba(52, 199, 89, 0.15); color: var(--positive); }
+        .tx-badge.expense { background: rgba(255, 59, 48, 0.15); color: var(--danger); }
+        .tx-badge.platform { background: var(--bg); color: var(--text-sec); border: 1px solid var(--border-color); }
+
+        .tx-card-body {
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .tx-detail-item { display: flex; justify-content: space-between; font-size: 13px; }
+        .tx-detail-name { font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 12px; }
+        .tx-detail-qty { font-weight: 800; color: var(--text-sec); flex-shrink: 0; }
+
+        .tx-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 6px;
+        }
+        
+        .tx-date-modern {
+            font-size: 12px;
+            color: var(--text-tert);
+            font-weight: 700;
+        }
+        
+        .tx-actions-modern { display: flex; gap: 8px; }
+        .btn-action-sm {
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text);
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .btn-action-sm:hover { background: var(--hover-bg); border-color: var(--accent); color: var(--accent); }
+        .btn-action-sm.primary { background: var(--accent); color: #ffffff; border: none; box-shadow: 0 4px 12px var(--accent-glow); }
+        .btn-action-sm.primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn-action-sm.danger { color: var(--danger); border-color: rgba(255, 59, 48, 0.3); background: rgba(255, 59, 48, 0.05); }
+        .btn-action-sm.danger:hover { background: rgba(255, 59, 48, 0.15); }
 
         /* FEE HEADERS */
         .fee-header {
@@ -735,6 +826,8 @@
             #product-list { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .product-item { height: 100%; margin-bottom: 0; }
             
+            #buku-list, #dash-tx-list { grid-template-columns: repeat(2, 1fr); }
+            
             .tx-form-row, .fee-input-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 
             .modal-overlay { align-items: center; padding: 24px; }
@@ -751,6 +844,8 @@
             .header, .bottom-nav { max-width: 1100px; }
             #product-list { grid-template-columns: repeat(3, 1fr); gap: 12px; }
             
+            #buku-list, #dash-tx-list { grid-template-columns: repeat(3, 1fr); }
+
             .dashboard-desktop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
             .dashboard-desktop-grid .card { margin-bottom: 0; height: 100%; }
             .modal { max-width: 650px; }
@@ -760,6 +855,7 @@
             .app { max-width: 1300px; }
             .header, .bottom-nav { max-width: 1300px; }
             #product-list { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+            #buku-list, #dash-tx-list { grid-template-columns: repeat(4, 1fr); }
         }
 
         @keyframes popInModal {
@@ -768,90 +864,6 @@
         }
 
         /* ==============================================================
-            MODERNISASI KARTU TRANSAKSI (UI INVOICE CARD)
-            ============================================================== */
-        .tx-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 18px;
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-        .tx-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--glow); }
-
-        .tx-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px dashed var(--border-color);
-            padding-bottom: 14px;
-        }
-        
-        .tx-badges { display: flex; gap: 8px; align-items: center; }
-        .tx-badge {
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .tx-badge.income { background: rgba(52, 199, 89, 0.15); color: var(--positive); }
-        .tx-badge.expense { background: rgba(255, 59, 48, 0.15); color: var(--danger); }
-        .tx-badge.platform { background: var(--bg); color: var(--text-sec); border: 1px solid var(--border-color); }
-
-        .tx-card-body {
-            background: var(--bg);
-            border-radius: 14px;
-            padding: 14px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .tx-detail-item { display: flex; justify-content: space-between; font-size: 13px; }
-        .tx-detail-name { font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 12px; }
-        .tx-detail-qty { font-weight: 800; color: var(--text-sec); flex-shrink: 0; }
-
-        .tx-card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 6px;
-        }
-        
-        .tx-date-modern {
-            font-size: 12px;
-            color: var(--text-tert);
-            font-weight: 700;
-        }
-        
-        .tx-actions-modern { display: flex; gap: 8px; }
-        .btn-action-sm {
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text);
-            transition: 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .btn-action-sm:hover { background: var(--hover-bg); border-color: var(--accent); color: var(--accent); }
-        .btn-action-sm.primary { background: var(--accent); color: #ffffff; border: none; box-shadow: 0 4px 12px var(--accent-glow); }
-        .btn-action-sm.primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .btn-action-sm.danger { color: var(--danger); border-color: rgba(255, 59, 48, 0.3); background: rgba(255, 59, 48, 0.05); }
-        .btn-action-sm.danger:hover { background: rgba(255, 59, 48, 0.15); }
-
-/* ==============================================================
             MODERN LEADERBOARD (TOP 3 BARANG)
             ============================================================== */
         .leaderboard-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
@@ -926,7 +938,72 @@
             }
         }
     
+        /* ==============================================================
+        1. FIX: TOP BARANG TERLARIS (TIDAK MENJEBOL BOX)
+        ============================================================== */
+        .leaderboard-list { 
+            display: grid !important;
+            /* PENTING: Gunakan minmax(0, 1fr) agar kolom bisa menyusut mengikuti layar */
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important; 
+            gap: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
 
+        .top-item { 
+            /* Hapus 'width: 100%' karena Grid sudah mengaturnya secara otomatis */
+            box-sizing: border-box !important;
+            margin-bottom: 0 !important;
+            overflow: hidden !important; /* Mencegah isi merembes keluar */
+        }
+
+        /* Memastikan wadah teks bisa menyusut */
+        .top-info {
+            min-width: 0 !important;
+            overflow: hidden !important;
+        }
+
+        /* Memaksa teks yang panjang menjadi titik-titik (...) jika layar sempit */
+        .top-name {
+            white-space: nowrap !important; 
+            overflow: hidden !important; 
+            text-overflow: ellipsis !important;
+            width: 100% !important;
+        }
+
+        /* Jika layar sangat kecil (HP), kembalikan jadi 1 baris agar tidak sesak */
+        @media (max-width: 480px) {
+            .leaderboard-list {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* ==============================================================
+        2. FIX: DAFTAR TRANSAKSI & DASHBOARD (AGAR TIDAK KEPOTONG)
+        ============================================================== */
+        /* Menggunakan auto-fit agar responsif otomatis di segala ukuran layar */
+        #dash-tx-list, 
+        #buku-list {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+            gap: 12px !important; 
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Mengunci kartu transaksi agar tidak menerobos layar sebelah kanan */
+        .tx-card {
+            width: 100% !important; 
+            box-sizing: border-box !important;
+            overflow: hidden !important; 
+        }
+
+        /* Memastikan Badge Penjualan dan Harga bisa turun baris jika layar sempit */
+        .tx-card-header {
+            flex-wrap: wrap !important; 
+            gap: 10px !important;
+        }
+        
     </style>
 </head>
 <body>
@@ -994,7 +1071,7 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-title">🏆 Top 3 Barang Terlaris</div>
+                    <div class="card-title">🏆 Top 10 Barang Terlaris</div>
                     <div id="dash-top-items"></div>
                 </div>
 
@@ -1552,7 +1629,6 @@
         messagingSenderId: "937284639769",
         appId: "1:937284639769:web:fa2f1522b11729aaf01e88"
         };
-
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -1625,6 +1701,9 @@
             const d = new Date(dateStr);
             return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
         }
+
+        
+
        // 1. Data Mentah Shopee
         const rawShopeeFees = `
         Fashion Accessories|Hair Accessories|Headbands & Bandanas, Hair Ties, Ribbons & Scrunchies, Hair Clips & Pins, Wigs & Extensions, Headwear, Tiaras & Flower Crowns, Other Hair Accessories|9.00
@@ -2256,7 +2335,7 @@
         Tiket, Voucher, & Layanan|E-Money|E-Money|8.25
         `;
 
-        // 2. Data Mentah Lazada ==============================>
+        // 2. Data Mentah Lazada 
         const rawLazadaFees = `
         Audio|Audio|Audio|7.20
         Audio|Audio Equipment|Audio Equipment|7.20
@@ -8845,6 +8924,7 @@
         `;
 
 
+
         function parseRawFees(rawText, platformPrefix) {
             return rawText.trim().split('\n').filter(line => line.trim() !== '').map((line, index) => {
                 const parts = line.split('|');
@@ -9305,10 +9385,10 @@
                 if (currentHomeFilter === "year") return txDate.getFullYear() === now.getFullYear();
                 return true;
             });
-            const recent = filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5); 
+            const recent = filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0); 
             
             if (recent.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-tert); font-size:12px; padding:10px;">Belum ada transaksi di periode ini</div>';
+                list.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; color:var(--text-tert); font-size:12px; padding:10px;">Belum ada transaksi di periode ini</div>';
                 return;
             }
             
@@ -9370,8 +9450,8 @@
             });
 
             const sorted = Object.entries(itemCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 3);
+                .sort((a, b) => b[2] - a[2])
+                .slice(0, 10);
 
             if (sorted.length === 0) {
                 list.innerHTML = '<div style="text-align:center; color:var(--text-tert); font-size:12px; padding:10px;">Belum ada data barang terjual</div>';
@@ -9937,7 +10017,7 @@ let promoScrollInterval;
             }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (filtered.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-tert); font-size:13px; font-weight:600; padding:30px;">Tidak ada data transaksi</div>';
+                list.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; color:var(--text-tert); font-size:13px; font-weight:600; padding:30px;">Tidak ada data transaksi</div>';
                 return;
             }
 
@@ -10163,7 +10243,7 @@ function generateStruk(tx) {
             struk += "-------------------------------------\n";
             if (tx.type === 'penjualan') { struk += "          STRUK PEMBELIAN\n"; } else { struk += "         NOTA BELANJA MARYN\n"; }
             struk += "-------------------------------------\n";
-            struk += "Nama Barang               Qty x Harga\n";
+            struk += "Nama Barang                Qty x Harga\n";
             struk += "-------------------------------------\n";
             
             tx.items.forEach((item) => {
